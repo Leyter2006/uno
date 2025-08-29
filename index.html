@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Validación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .container, .nombre-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input {
+            margin: 10px 0;
+            padding: 8px;
+            width: 200px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        .mensaje {
+            font-size: 48px;
+            color: #d32f2f;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+        .error-mensaje {
+            color: #d32f2f;
+            font-size: 16px;
+            margin-top: 10px;
+            display: none;
+        }
+        @media (max-width: 600px) {
+            .mensaje {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nombre-container" id="nombre-inicial">
+        <h1>HOLA, INGRESA TU NOMBRE POR FAVOR</h1>
+        <input type="text" id="nombre-usuario" placeholder="Tu nombre" required><br>
+        <button onclick="mostrarFormulario()">Siguiente</button>
+        <div class="error-mensaje" id="error-nombre">ESTE NOMBRE NO TIENE ACCESO. F</div>
+    </div>
+    <div class="container" id="formulario" style="display: none;">
+        <h1>Ingresa la información de la persona que te gusta</h1>
+        <input type="text" id="nombre" placeholder="Nombre" required><br>
+        <input type="number" id="edad" placeholder="Edad" required><br>
+        <input type="text" id="color" placeholder="Color favorito" required><br>
+        <input type="number" id="nacimiento" placeholder="Año de nacimiento" required><br>
+        <button onclick="validarFormulario()">Acceder</button>
+        <div class="error-mensaje" id="error-mensaje">PENSÉ ME CONOCÍAS MÁS :(</div>
+    </div>
+    <div class="mensaje" id="mensaje" style="display: none;"></div>
+
+    <script>
+        let nombreUsuario = ""; // Variable para almacenar el nombre del usuario
+
+        function normalizarTexto(texto) {
+            return texto
+                .normalize("NFD") // Descompone tildes
+                .replace(/[\u0300-\u036f]/g, "") // Elimina tildes
+                .toLowerCase()
+                .trim();
+        }
+
+        function mostrarFormulario() {
+            nombreUsuario = document.getElementById("nombre-usuario").value;
+            const errorNombre = document.getElementById("error-nombre");
+            const nombresPermitidos = ["dani", "vane", "danitza", "vanessa"].map(normalizarTexto);
+
+            if (nombreUsuario.trim() === "") {
+                errorNombre.textContent = "Por favor, ingresa tu nombre.";
+                errorNombre.style.display = "block";
+                return;
+            }
+
+            if (!nombresPermitidos.includes(normalizarTexto(nombreUsuario))) {
+                errorNombre.textContent = "ESTE NOMBRE NO TIENE ACCESO. F";
+                errorNombre.style.display = "block";
+                return;
+            }
+
+            document.getElementById("nombre-inicial").style.display = "none";
+            document.getElementById("formulario").style.display = "block";
+            errorNombre.style.display = "none";
+        }
+
+        function validarFormulario() {
+            const nombre = document.getElementById("nombre").value;
+            const edad = parseInt(document.getElementById("edad").value);
+            const color = document.getElementById("color").value;
+            const nacimiento = parseInt(document.getElementById("nacimiento").value);
+            const formulario = document.getElementById("formulario");
+            const mensajeDiv = document.getElementById("mensaje");
+            const errorMensaje = document.getElementById("error-mensaje");
+
+            // Datos correctos normalizados
+            const nombreCorrecto = normalizarTexto("Harvey");
+            const colorCorrecto = normalizarTexto("negro");
+            const edadCorrecta = 18;
+            const nacimientoCorrecto = 2006;
+
+            // Normalizar entradas del usuario
+            const nombreNormalizado = normalizarTexto(nombre);
+            const colorNormalizado = normalizarTexto(color);
+
+            // Validación
+            if (
+                nombreNormalizado === nombreCorrecto &&
+                edad === edadCorrecta &&
+                colorNormalizado === colorCorrecto &&
+                nacimiento === nacimientoCorrecto
+            ) {
+                formulario.style.display = "none"; // Oculta el formulario
+                mensajeDiv.textContent = `FELICIDADES ${nombreUsuario.toUpperCase()}, LOGRASTE ACCEDER AL CORAZONCITO DE HARVY ❤️`;
+                mensajeDiv.style.display = "block"; // Muestra el mensaje de éxito
+                errorMensaje.style.display = "none"; // Oculta el mensaje de error
+            } else {
+                errorMensaje.style.display = "block"; // Muestra el mensaje de error
+            }
+        }
+    </script>
+</body>
+</html>
